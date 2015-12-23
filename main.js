@@ -1,5 +1,5 @@
 
-var RedditTopComment = (function(){
+var RedditTopComment = (function() {
     var $popover;
     var cache = {};
 
@@ -30,10 +30,8 @@ var RedditTopComment = (function(){
         );
     }
 
-
     // Methods
     // ================================================
-
     function insertPopover() {
         $popover = document.createElement('div');
         $popover.className = "rtc-popover";
@@ -69,8 +67,13 @@ var RedditTopComment = (function(){
         $popover.innerHTML = "Loading...";
 
         getTopComments(link.href).then(function(data) {
-            var topComment = data[1].data.children[0].data;
-            var template = commentTemplate(topComment);
+            var template;
+            try {
+                var topComment = data[1].data.children[0].data;    
+                template = commentTemplate(topComment);
+            } catch(err) {
+                template = "No comments yet";
+            }
             $popover.innerHTML = template;
         });
     }
