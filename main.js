@@ -6,7 +6,7 @@ var RedditTopComment = (function() {
     var commentUrl = null;
 
     return {
-        init: init
+        init: init,
     };
     
     function init() {

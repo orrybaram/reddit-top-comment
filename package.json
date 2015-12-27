@@ -1,0 +1,24 @@
+{
+  "name": "reddit-top-comment",
+  "version": "1.0.0",
+  "description": "Hover over the comments link to get a popover for the top comment on reddit",
+  "main": "main.js",
+  "scripts": {
+    "test": "mocha-phantomjs test-runner.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/orrybaram/reddit-top-comment"
+  },
+  "author": "Orry Baram",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/orrybaram/reddit-top-comment/issues"
+  },
+  "homepage": "https://github.com/orrybaram/reddit-top-comment",
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "mocha": "^2.3.4",
+    "mocha-phantomjs": "^4.0.1"
+  }
+}
