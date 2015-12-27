@@ -8,8 +8,8 @@
   ],
   "content_scripts": [{ 
     "matches": ["https://*.reddit.com/*"], 
-    "js": ["main.js"], 
-    "css": ["main.css"] 
+    "js": ["src/main.js"], 
+    "css": ["src/main.css"] 
   }],
 
   "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",

@@ -1,3 +1,13 @@
+describe("RedditTopComment init", function() {
+	RedditTopComment.init();
+	it("should append a blank popover to the body", function() {
+		expect(document.getElementsByClassName("rtc-popover")[0]).to.not.equal(null);
+	})
+})
+
+
+
+
 describe("htmlDecode", function() {
 	it("will take escaped html and return as unescaped html", function() {
 		expect(htmlDecode("&lt;div class=&quot;thing&quot;&gt;&lt;/div&gt;")).to.equal('<div class="thing"></div>');	

@@ -11,10 +11,11 @@ var RedditTopComment = (function() {
     
     function init() {
         insertPopover();
-        getCommentLinks();
+        handleCommentLinks(getCommentLinks());
+    
 
         window.addEventListener("hashchange", function() {
-            getCommentLinks();
+            handleCommentLinks(getCommentLinks());
         });
     }
 
@@ -46,6 +47,7 @@ var RedditTopComment = (function() {
     }
 
     function getCommentLinks() {
+        var links = [];
         var entries = document.getElementsByClassName('entry');
         for(var i = 0; i < entries.length; i++) {
             var entry = entries[i];
@@ -53,20 +55,23 @@ var RedditTopComment = (function() {
             if(!entryLinks) continue;
             var commentLink = entryLinks.getElementsByClassName('comments')[0] || null;
             if(!commentLink) continue;
-            handleCommentLink(commentLink);
+            links.push(commentLink);
         }
+        return links;
     }
 
-    function handleCommentLink(link) {
-        hoverIntent(link, {
-            onHover: function() {
-                displayTopComments(link);
-            },
-            offHover: hideTopComments,
-            onDelay: 500,
-            offDelay: 400,
-            hoverTarget: $popover
-        });
+    function handleCommentLinks(links) {
+        links.forEach(function(link) {
+            hoverIntent(link, {
+                onHover: function() {
+                    displayTopComments(link);
+                },
+                offHover: hideTopComments,
+                onDelay: 500,
+                offDelay: 400,
+                hoverTarget: $popover
+            });    
+        })
     }
 
     function displayTopComments(link) {
