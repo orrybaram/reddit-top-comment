@@ -1,6 +1,6 @@
 {
   "name": "Reddit Top Comment",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "manifest_version": 2,
   "description": "Hover over the comments link to get a popover for the top comment on reddit",
   "permissions": [
