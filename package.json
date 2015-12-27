@@ -2,9 +2,9 @@
   "name": "reddit-top-comment",
   "version": "1.0.0",
   "description": "Hover over the comments link to get a popover for the top comment on reddit",
-  "main": "main.js",
+  "main": "src/main.js",
   "scripts": {
-    "test": "mocha-phantomjs test-runner.html"
+    "test": "mocha-phantomjs test/test-runner.html"
   },
   "repository": {
     "type": "git",
