@@ -9,16 +9,44 @@
 	font-size: 14px;
 	border: 1px solid #EFEFEF;
 	box-shadow: 0 0 3px rgba(0,0,0,0.5);
+	max-width: 70%;
 	transition: opacity .5s, left .2s, width .5s;
 }
 
 .rtc-popover__displayed {
 	opacity: 1;
 }
-
 .rtc--top-comment-header--score {
 	font-weight: 700;
 }
 .rtc--top-comment-header--created {
 	color: gray;
 }
+.rtc--top-comment__reply {
+	margin: 10px 10px 10px 20px;
+	padding: 15px;
+}
+.rtc--top-comment--show-replies {
+	margin-top: 20px;
+}
+.rtc--top-comment__odd {
+	background: white;
+}
+.rtc--top-comment__even {
+	background: #F1F1F1;
+}
+
+/* Dumb but apparently how reddit does it */
+/*.rtc--top-comment__reply .rtc--top-comment__reply,
+.rtc--top-comment__reply .rtc--top-comment__reply .rtc--top-comment__reply .rtc--top-comment__reply,
+.rtc--top-comment__reply .rtc--top-comment__reply .rtc--top-comment__reply .rtc--top-comment__reply 
+.rtc--top-comment__reply .rtc--top-comment__reply .rtc--top-comment__reply .rtc--top-comment__reply {
+	background: white;
+}
+.rtc--top-comment__reply, 
+.rtc--top-comment__reply .rtc--top-comment__reply .rtc--top-comment__reply,
+.rtc--top-comment__reply .rtc--top-comment__reply .rtc--top-comment__reply .rtc--top-comment__reply .rtc--top-comment__reply,
+.rtc--top-comment__reply .rtc--top-comment__reply .rtc--top-comment__reply .rtc--top-comment__reply .rtc--top-comment__reply 
+.rtc--top-comment__reply .rtc--top-comment__reply {
+	background: #F1F1F1;
+}*/

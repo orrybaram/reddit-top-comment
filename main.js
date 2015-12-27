@@ -1,7 +1,9 @@
-
 var RedditTopComment = (function() {
     var $popover;
-    var cache = {};
+    var commentCache = {};
+    var replyCache = {};
+    var topComment = null;
+    var commentUrl = null;
 
     return {
         init: init
@@ -14,10 +16,10 @@ var RedditTopComment = (function() {
 
     // Template
     // ================================================
-    function commentTemplate(comment) {
-        console.log(comment);
+    function commentTemplate(comment, isReply) {
+        comment = comment || topComment;
         return (
-            '<div class="rtc--top-comment">' +
+            '<div class="rtc--top-comment' + (isReply ? " rtc--top-comment__reply" : "") + '">' +
                 '<div class="rtc--top-comment-header">' +
                     '<span class="rtc--top-comment-header--author"><a href="/user/' + comment.author + '">' + comment.author + '</a></span> ' + 
                     '<strong class="rtc--top-comment-header--score">' + comment.score + '</strong> ' + 
@@ -26,10 +28,11 @@ var RedditTopComment = (function() {
                 '<div class="rtc--comment-body">' +
                     htmlDecode(comment.body_html) +
                 '</div>' +
+                '<div class="rtc--comment--reply-hook"></div>' +
             '</div>'
         );
     }
-
+   
     // Methods
     // ================================================
     function insertPopover() {
@@ -67,16 +70,61 @@ var RedditTopComment = (function() {
         $popover.style.left = (link.documentOffsetLeft) + "px";
         $popover.innerHTML = "Loading...";
 
-        getTopComments(link.href).then(function(data) {
+        getTopComment(link.href).then(function(data) {
             var template;
             try {
-                var topComment = data[1].data.children[0].data;    
-                template = commentTemplate(topComment);
+                topComment = data[1].data.children[0].data;    
+                template = commentTemplate();
             } catch(err) {
+                console.log(err)
                 template = "No comments yet";
             }
             $popover.innerHTML = template;
-        });
+            addTargetBlankToLinks($popover);
+
+            if(topComment.replies) {
+                $popover.innerHTML += "<button class='rtc--top-comment--show-replies'>Load more replies</button>";
+                var loadMore = $popover.getElementsByClassName("rtc--top-comment--show-replies")[0];
+                loadMore.addEventListener("click", function() {
+                    loadMore.innerHTML = "Loading...";
+                    
+                    getTopCommentReplies(topComment.id).then(function() {
+                        var comment = data[1].data.children[0].data;
+                        addReplies(comment);
+                        loadMore.style.display = "none";
+                    })
+                })
+            }
+        })
+    }
+
+    function addReplies(comment) {
+        if(!comment.replies) {
+            onRepliesAdded();
+            return;
+        }
+        var reply = comment.replies.data.children[0].data;
+        if(!reply.author) {
+            onRepliesAdded();
+            return;   
+        }
+        var replyHooks = $popover.getElementsByClassName("rtc--comment--reply-hook");
+        var replyHook = replyHooks[replyHooks.length - 1];
+        replyHook.innerHTML = commentTemplate(reply, true);
+        addReplies(reply);
+    }
+
+    function onRepliesAdded() {
+        addTargetBlankToLinks($popover)
+
+        var comments = $popover.getElementsByClassName("rtc--top-comment__reply");
+        for(var i = 0; i < comments.length; i++) {
+            if(i % 2 === 0) {
+                comments[i].classList.add("rtc--top-comment__even");
+            } else {
+                comments[i].classList.add("rtc--top-comment__odd");
+            }
+        }
     }
 
     function hideTopComments() {
@@ -85,23 +133,48 @@ var RedditTopComment = (function() {
         $popover.style.left = 0;
     }
 
-    function getTopComments(url) {
-        jsonurl = url.substring(0, url.length - 1);
-        jsonurl += '.json?limit=10&depth=10';
+    function getTopComment(url) {
+        commentUrl = url.substring(0, url.length - 1);
+        commentUrl += '.json?limit=100&depth=10';
         return new Promise(function(resolve, reject) {
             
-            if(cache[url]) {
-                console.log("cached...");
-                resolve(cache[url]);
+            if(commentCache[url]) {
+                resolve(commentCache[url]);
                 return;
             }
 
             var req = new XMLHttpRequest();
-            req.open('GET', jsonurl);
+            req.open('GET', commentUrl);
             req.responseType = 'json';
             req.onload = function() {
                 if (req.status == 200) {
-                    cache[url] = req.response;
+                    commentCache[url] = req.response;
+                    resolve(req.response);
+                }
+                else {
+                    reject(Error(req.statusText));
+                }
+            };
+            req.onerror = function() {
+                reject(Error("Network Error"));
+            };
+            req.send();
+        });
+    }
+    function getTopCommentReplies(commentId) {
+        commentUrl += "&comment=" + commentId;
+        return new Promise(function(resolve, reject) {
+            if(replyCache[commentId]) {
+                resolve(replyCache[commentId]);
+                return;
+            }
+
+            var req = new XMLHttpRequest();
+            req.open('GET', commentUrl);
+            req.responseType = 'json';
+            req.onload = function() {
+                if (req.status == 200) {
+                    replyCache[commentId] = req.response;
                     resolve(req.response);
                 }
                 else {
@@ -179,7 +252,14 @@ function hoverIntent(el, opts) {
     }
 }
 
-function htmlDecode(input){
+function addTargetBlankToLinks(el) {
+    var links = el.getElementsByTagName("a");
+    for(var i = 0; i < links.length; i++) {
+        links[i].setAttribute("target", "_blank");
+    }
+}
+
+function htmlDecode(input) {
     var e = document.createElement('div');
     e.innerHTML = input;
     return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
@@ -189,10 +269,10 @@ window.Object.defineProperty( Element.prototype, 'documentOffsetTop', {
     get: function () { 
         return this.offsetTop + ( this.offsetParent ? this.offsetParent.documentOffsetTop : 0 );
     }
-} );
+});
 
 window.Object.defineProperty( Element.prototype, 'documentOffsetLeft', {
     get: function () { 
         return this.offsetLeft + ( this.offsetParent ? this.offsetParent.documentOffsetLeft : 0 );
     }
-} );
+});
