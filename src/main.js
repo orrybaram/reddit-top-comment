@@ -7,15 +7,16 @@ var RedditTopComment = (function() {
 
     return {
         init: init,
+        _getCommentLinks: _getCommentLinks
     };
     
     function init() {
         insertPopover();
-        handleCommentLinks(getCommentLinks());
+        handleCommentLinks(_getCommentLinks());
     
 
         window.addEventListener("hashchange", function() {
-            handleCommentLinks(getCommentLinks());
+            handleCommentLinks(_getCommentLinks());
         });
     }
 
@@ -46,7 +47,7 @@ var RedditTopComment = (function() {
         document.body.appendChild($popover);
     }
 
-    function getCommentLinks() {
+    function _getCommentLinks() {
         var links = [];
         var entries = document.getElementsByClassName('entry');
         for(var i = 0; i < entries.length; i++) {
