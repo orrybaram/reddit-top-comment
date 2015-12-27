@@ -8,8 +8,8 @@ var RedditTopComment = (function() {
     };
     
     function init() {
-        getCommentLinks();
         insertPopover();
+        getCommentLinks();
     }
 
     // Template
@@ -56,7 +56,8 @@ var RedditTopComment = (function() {
                 displayTopComments(link);
             },
             offHover: hideTopComments,
-            onDelay: 1000
+            onDelay: 1000,
+            hoverTarget: $popover
         });
     }
 
@@ -127,9 +128,13 @@ function hoverIntent(el, opts) {
     var offHover = opts.offHover || function() {};
     var onDelay = opts.onDelay || 500;
     var offDelay = opts.offDelay || 500;
+    var hoverTarget = opts.hoverTarget || null;
     var ontimer = null;
     var offtimer = null;
+    var targetHovered = false;
     
+    console.log(hoverTarget);
+
     el.addEventListener('mouseenter', function() {
         clearTimeout(offtimer);
         ontimer = setTimeout(function() {
@@ -139,11 +144,26 @@ function hoverIntent(el, opts) {
     });
     el.addEventListener('mouseleave', function() {
         clearTimeout(ontimer);
+        onMouseOut()
+    });
+
+    if(hoverTarget) {
+        hoverTarget.addEventListener("mouseenter", function() {
+            targetHovered = true;
+        })
+        hoverTarget.addEventListener("mouseleave", function() {
+            targetHovered = false;
+            onMouseOut()            
+        })
+    }
+
+    function onMouseOut() {
         offtimer = setTimeout(function() {
+            if(targetHovered) return;
             offHover();
             offtimer = null;
         }, offDelay);
-    });
+    }
 }
 
 function htmlDecode(input){
