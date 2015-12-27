@@ -4,6 +4,15 @@
         <link rel="stylesheet" href="./node_modules/mocha/mocha.css" />
     </head>
     <body>
+
+        <div id="link-test">
+            <a href="somelink1">Link 1</a>
+            <p>Not a link</p>
+            <a href="somelink2">Link 2</a>
+            <a href="somelink3">Link 3</a>
+            <a href="somelink4">Link 4</a>
+        </div>
+
         <div id="mocha"></div>
         <script src="./node_modules/mocha/mocha.js"></script>
         <script src="./node_modules/chai/chai.js"></script>
@@ -13,6 +22,7 @@
             mocha.reporter('html');
             var expect = chai.expect;
         </script>
+        <script src="main.js"></script>
         <script src="main.test.js"></script>
         <script>
             if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
