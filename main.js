@@ -122,6 +122,20 @@ RedditTopComment.init();
 // Utils
 // ================================================
 
+
+/**
+ * Adds a delay to a hovered element
+ * @param {DOMElement} el 
+ * @param {Object} opts
+ * opts = {
+        onHover: {Function},
+        offHover: {Function},
+        onDelay: {Integer},
+        offDelay: {Integer},
+        hoverTarget: {DOMElement}
+    }
+ */
+
 function hoverIntent(el, opts) {
     
     var onHover = opts.onHover || function() {};
@@ -129,12 +143,11 @@ function hoverIntent(el, opts) {
     var onDelay = opts.onDelay || 500;
     var offDelay = opts.offDelay || 500;
     var hoverTarget = opts.hoverTarget || null;
+    
     var ontimer = null;
     var offtimer = null;
     var targetHovered = false;
     
-    console.log(hoverTarget);
-
     el.addEventListener('mouseenter', function() {
         clearTimeout(offtimer);
         ontimer = setTimeout(function() {
